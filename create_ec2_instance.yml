@@ -14,13 +14,10 @@
     - name: key_name
       prompt: enter AWS keypair
       private: no
-    - name: region
-      prompt: enter AWS region
-      private: no
   tasks:
     - name: launching ec2 instance
       amazon.aws.ec2_instance:
-        name: "weather_wordpress"
+        name: "wordpress"
         key_name: "{{ key_name }}"
         instance_type: "{{ instance_type }}"
         image_id: "{{ image }}"
@@ -31,10 +28,6 @@
         network:
           assign_public_ip: true
       register: ec2
-    - name: overwrite host file with new hosts
-      copy:
-        dest: hosts
-        content: "{{ ec2.instances[0].public_dns_name }}"
 
     - name: wait for ssh to come up
       wait_for:

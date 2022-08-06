@@ -1,32 +1,10 @@
 ---
-# https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
-- name: get required parameters
-  hosts: localhost
+- name: begin wordpress deployment
+  hosts: tag_Name_wordpress
+  become: yes
+  remote_user: ec2-user
   vars:
     domain_regex: '^((?!-))(xn--)?[a-z0-9][a-z0-9-_]{0,61}[a-z0-9]{0,1}\.(xn--)?([a-z0-9\-]{1,61}|[a-z0-9-]{1,30}\.[a-z]{2,})$'
-  vars_prompt:
-    - name: wp_domain
-      prompt: enter domain name
-      private: no
-  pre_tasks:
-    - assert:
-        that: wp_domain is match(domain_regex)
-        success_msg: valid domain
-        fail_msg: invalid domain
-- name: install required components for wordpress
-  hosts: all
-  become: yes
-  remote_user: ec2-user
-  roles:
-    - amazon_linux_extras
-    - httpd
-    - mysql
-    - wp_cli
-- name: begin wordpress deployment
-  hosts: all
-  become: yes
-  remote_user: ec2-user
-  vars:
     mysql_user_id: 88
     mysql_group_id: 88
     mysql_db_dir: /var/db/mysql
@@ -37,15 +15,28 @@
     wp_admin_user: "wpadmin"
   vars_files:
     - secrets.yml
+  vars_prompt:
+    - name: wp_domain
+      prompt: enter domain name
+      private: no
   environment:
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
   pre_tasks:
+    - assert:
+        that: wp_domain is match(domain_regex)
+        success_msg: valid domain
+        fail_msg: invalid domain
     - name: Create mysql directory
       ansible.builtin.file:
         path: "{{ mysql_db_dir }}"
         state: directory
         owner: "{{ mysql_user_id }}"
         group: "{{ mysql_group_id }}"
+  roles:
+    - amazon_linux_extras
+    - httpd
+    - mysql
+    - wp_cli
   tasks:
     - name: deploy wordpress mysql docker container
       community.docker.docker_container:
@@ -79,16 +70,12 @@
         --dbhost=127.0.0.1  
         --path={{ wordpress_path }}
         --force
-    # - name: populate wordpress db
-    #   ansible.builtin.shell: >
-    #     wp-cli db create 
-    #     --path={{ wordpress_path }}
     - name: begin install of wordpress
       ansible.builtin.shell: >
         wp-cli core install 
-        --url=wpclidemo.dev 
-        --title="WP-CLI"
+        --url="{{ wp_domain }}"
+        --title="Weather Blog"
         --admin_user={{ wp_admin_user }}
         --admin_password={{ mysql_password }}
-        --admin_email=info@wp-cli.org 
+        --admin_email=info@{{ wp_domain }}
         --path={{ wordpress_path }}
