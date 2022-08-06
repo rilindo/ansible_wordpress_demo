@@ -23,9 +23,6 @@
   hosts: all
   become: yes
   remote_user: ec2-user
-  vars:
-    pip_pkgs:
-      - docker
   roles:
     - amazon_linux_extras
     - httpd
