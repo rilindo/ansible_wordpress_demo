@@ -1,4 +1,18 @@
 ---
+# https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
+- name: get required parameters
+  hosts: localhost
+  vars:
+    domain_regex: '^((?!-))(xn--)?[a-z0-9][a-z0-9-_]{0,61}[a-z0-9]{0,1}\.(xn--)?([a-z0-9\-]{1,61}|[a-z0-9-]{1,30}\.[a-z]{2,})$'
+  vars_prompt:
+    - name: wp_domain
+      prompt: enter domain name
+      private: no
+  pre_tasks:
+    - assert:
+        that: wp_domain is match(domain_regex)
+        success_msg: valid domain
+        fail_msg: invalid domain
 - name: deploy local collections
   hosts: localhost
   tasks:
@@ -63,6 +77,9 @@
           MYSQL_PASSWORD: "{{ mysql_password }}"
           MYSQL_DATABASE: "{{ mysql_db }}"
           MYSQL_ROOT_PASSWORD: "{{ mysql_root_password }}"
+    - name: wait for mySQL to finish
+      ansible.builtin.pause:
+        minutes: 2
     - name: download and extract wordpress
       ansible.builtin.shell: >
         wp-cli core download 

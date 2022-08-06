@@ -1,0 +1,4 @@
+---
+- import_playbook: collections.yml
+- import_playbook: create_ec2_instance.yml
+- import_playbook: deploy_wordpress.yml
