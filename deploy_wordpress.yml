@@ -13,6 +13,7 @@
     mysql_db: wordpress
     wordpress_path: /var/www/html
     wp_admin_user: "wpadmin"
+    weather_url: "https://wttr.in/Chicago?format=3"
   vars_files:
     - secrets.yml
   vars_prompt:
@@ -26,19 +27,25 @@
         that: wp_domain is match(domain_regex)
         success_msg: valid domain
         fail_msg: invalid domain
-    - name: Create mysql directory
+    - name: Create directory for mysql container files
       ansible.builtin.file:
         path: "{{ mysql_db_dir }}"
         state: directory
         owner: "{{ mysql_user_id }}"
         group: "{{ mysql_group_id }}"
+    - name: get current weather forecast
+      ansible.builtin.uri:
+        url: "{{ weather_url }}"
+        method: GET
+        return_content: true
+      register: current_weather
   roles:
     - amazon_linux_extras
     - httpd
     - mysql
     - wp_cli
   tasks:
-    - name: deploy wordpress mysql docker container
+    - name: instantiate  wordpress mysql docker container
       community.docker.docker_container:
         name: "{{ mysql_db }}"
         image: "{{ mysql_image }}"
@@ -53,15 +60,15 @@
           MYSQL_PASSWORD: "{{ mysql_password }}"
           MYSQL_DATABASE: "{{ mysql_db }}"
           MYSQL_ROOT_PASSWORD: "{{ mysql_root_password }}"
-    - name: wait for mySQL to finish
+    - name: wait for mySQL container to finish reconfiguring
       ansible.builtin.pause:
         minutes: 2
-    - name: download and extract wordpress
+    - name: download and extract wordpress to target directory
       ansible.builtin.shell: >
         wp-cli core download 
         --path={{ wordpress_path }}
         --force
-    - name: create wordpress config
+    - name: create wordpress configuration
       ansible.builtin.shell: >
         wp-cli config create 
         --dbname={{ mysql_db }} 
@@ -70,7 +77,7 @@
         --dbhost=127.0.0.1  
         --path={{ wordpress_path }}
         --force
-    - name: begin install of wordpress
+    - name: finalize installation of wordpress
       ansible.builtin.shell: >
         wp-cli core install 
         --url="{{ wp_domain }}"
@@ -78,4 +85,12 @@
         --admin_user={{ wp_admin_user }}
         --admin_password={{ mysql_password }}
         --admin_email=info@{{ wp_domain }}
+        --path={{ wordpress_path }}
+    - name: create first wordpress post
+      ansible.builtin.shell: >
+        wp-cli post create 
+        --post_type=post 
+        --post_title="Current Chicago Weather" 
+        --post_content="{{ current_weather.content }}" 
+        --post_status=publish  
         --path={{ wordpress_path }}
