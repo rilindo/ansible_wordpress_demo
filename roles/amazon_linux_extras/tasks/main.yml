@@ -1,0 +1,20 @@
+---
+# tasks file for amazon_linux_extras
+
+- name: enable components to be deployed from Amazon Linux Extras
+  ansible.builtin.command:
+    cmd: "amazon-linux-extras enable -y {{ item.name }}"
+  loop: "{{ amazon_linux_extras_components }}" 
+
+- name: install packages
+  ansible.builtin.command:
+    cmd: "amazon-linux-extras install -y {{ item.pkgs }}"
+  loop: "{{ amazon_linux_extras_components }}" 
+
+- name: enable services
+  ansible.builtin.systemd:
+    name: "{{ item.svc }}"
+    enabled: yes
+    state: started
+  loop:  "{{ amazon_linux_extras_components }}" 
+  when: item.svc is defined

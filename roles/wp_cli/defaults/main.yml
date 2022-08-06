@@ -1,0 +1,7 @@
+---
+# defaults file for wp_cli
+
+wp_cli_url: https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+wp_cli_dest_path: /usr/local/bin/wp-cli
+wp_cli_user: root
+wp_cli_group: root

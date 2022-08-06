@@ -1,0 +1,4 @@
+---
+- name: install mysql, so that we can use the client
+  ansible.builtin.yum:
+    name: "{{ mysql_pkgs }}"

@@ -1,0 +1,5 @@
+---
+# tasks file for mysql
+
+- include_tasks: repo.yml
+- include_tasks: install.yml

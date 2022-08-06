@@ -1,0 +1,92 @@
+---
+- name: deploy local collections
+  hosts: localhost
+  tasks:
+  - name: install docker community collection
+    command:
+      cmd: ansible-galaxy collection install community.docker -p collections
+- name: install required components for wordpress
+  hosts: all
+  become: yes
+  remote_user: ec2-user
+  vars:
+    pip_pkgs:
+      - docker
+  roles:
+    - amazon_linux_extras
+    - php
+    - httpd
+    - mysql
+    - wp_cli
+  tasks:
+    - name: install pip packages
+      ansible.builtin.pip:
+        name: "{{ pip_pkgs }}"
+        state: present
+- name: begin wordpress deployment
+  hosts: all
+  become: yes
+  remote_user: ec2-user
+  vars:
+    mysql_user_id: 88
+    mysql_group_id: 88
+    mysql_db_dir: /var/db/mysql
+    mysql_image: mysql
+    mysql_user: wordpress
+    mysql_db: wordpress
+    wordpress_path: /var/www/html
+    wp_admin_user: "wpadmin"
+  vars_files:
+    - secrets.yml
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  pre_tasks:
+    - name: Create mysql directory
+      ansible.builtin.file:
+        path: "{{ mysql_db_dir }}"
+        state: directory
+        owner: "{{ mysql_user_id }}"
+        group: "{{ mysql_group_id }}"
+  tasks:
+    - name: deploy wordpress mysql docker container
+      community.docker.docker_container:
+        name: "{{ mysql_db }}"
+        image: "{{ mysql_image }}"
+        restart: yes
+        state: started
+        ports:
+          - 3306:3306
+        volumes:
+          - "{{ mysql_db_dir }}:/var/lib/mysql"
+        env:
+          MYSQL_USER: "{{ mysql_user }}"
+          MYSQL_PASSWORD: "{{ mysql_password }}"
+          MYSQL_DATABASE: "{{ mysql_db }}"
+          MYSQL_ROOT_PASSWORD: "{{ mysql_root_password }}"
+    - name: download and extract wordpress
+      ansible.builtin.shell: >
+        wp-cli core download 
+        --path={{ wordpress_path }}
+        --force
+    - name: create wordpress config
+      ansible.builtin.shell: >
+        wp-cli config create 
+        --dbname={{ mysql_db }} 
+        --dbuser={{ mysql_user }} 
+        --dbpass={{ mysql_password }}
+        --dbhost=127.0.0.1  
+        --path={{ wordpress_path }}
+        --force
+    # - name: populate wordpress db
+    #   ansible.builtin.shell: >
+    #     wp-cli db create 
+    #     --path={{ wordpress_path }}
+    - name: begin install of wordpress
+      ansible.builtin.shell: >
+        wp-cli core install 
+        --url=wpclidemo.dev 
+        --title="WP-CLI"
+        --admin_user={{ wp_admin_user }}
+        --admin_password={{ mysql_password }}
+        --admin_email=info@wp-cli.org 
+        --path={{ wordpress_path }}

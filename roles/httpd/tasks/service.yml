@@ -1,0 +1,6 @@
+---
+- name: enable httpd service
+  ansible.builtin.systemd:
+    name: "{{ httpd_svc }}"
+    state: started
+    enabled: yes

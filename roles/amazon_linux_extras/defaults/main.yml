@@ -1,0 +1,11 @@
+---
+# defaults file for amazon_linux_extras
+
+amazon_linux_extras_components:
+  - name: docker
+    pkgs: docker
+    svc: docker
+  - name: php7.4
+    pkgs: php7.4
+  - name: epel
+    pkgs: epel

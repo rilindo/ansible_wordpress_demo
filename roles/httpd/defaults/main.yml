@@ -1,0 +1,6 @@
+---
+# defaults file for httpd
+
+httpd_pkg:
+  - httpd
+httpd_svc: httpd

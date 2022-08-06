@@ -1,0 +1,7 @@
+---
+# defaults file for mysql
+
+mysql_repo_url: https://dev.mysql.com/get/mysql80-community-release-el7-5.noarch.rpm
+
+mysql_pkgs:
+  - mysql-community-server

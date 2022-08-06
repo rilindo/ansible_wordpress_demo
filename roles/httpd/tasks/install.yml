@@ -1,0 +1,5 @@
+---
+- name: installing httpd
+  ansible.builtin.yum:
+    name: "{{ httpd_pkg }}"
+    state: present

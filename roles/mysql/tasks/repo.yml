@@ -1,0 +1,4 @@
+---
+- name: install mysql repo
+  ansible.builtin.yum:
+    name: "{{ mysql_repo_url }}"

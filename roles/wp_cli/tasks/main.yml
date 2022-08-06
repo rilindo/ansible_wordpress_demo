@@ -1,0 +1,10 @@
+---
+# tasks file for wp_cli
+
+- name: retrieve wp-cli
+  ansible.builtin.get_url:
+    url: "{{ wp_cli_url }}"
+    dest: "{{ wp_cli_dest_path }}"
+    owner: "{{ wp_cli_user }}"
+    group: "{{ wp_cli_group }}"
+    mode: 0755
