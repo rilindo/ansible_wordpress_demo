@@ -28,15 +28,9 @@
       - docker
   roles:
     - amazon_linux_extras
-    - php
     - httpd
     - mysql
     - wp_cli
-  tasks:
-    - name: install pip packages
-      ansible.builtin.pip:
-        name: "{{ pip_pkgs }}"
-        state: present
 - name: begin wordpress deployment
   hosts: all
   become: yes

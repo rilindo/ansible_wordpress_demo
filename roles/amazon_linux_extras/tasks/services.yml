@@ -1,0 +1,8 @@
+---
+- name: enable services
+  ansible.builtin.systemd:
+    name: "{{ item.svc }}"
+    enabled: yes
+    state: started
+  loop:  "{{ amazon_linux_extras_components }}" 
+  when: item.svc is defined

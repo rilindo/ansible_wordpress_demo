@@ -5,7 +5,15 @@ amazon_linux_extras_components:
   - name: docker
     pkgs: docker
     svc: docker
+    add_pip_pkgs:
+      - docker
   - name: php7.4
     pkgs: php7.4
+    add_yum_pkgs:
+      - php-cli
+      - php-pdo
+      - php-fpm
+      - php-json
+      - php-mysqlnd
   - name: epel
     pkgs: epel

@@ -1,5 +1,0 @@
----
-# tasks file for php
-- name: install php
-  ansible.builtin.yum: 
-    name: "{{ php_pkgs }}"

@@ -1,0 +1,15 @@
+---
+
+- name: install additional components from yum
+  yum:
+    name: "{{ item.add_yum_pkgs }}"
+    state: present
+  loop:  "{{ amazon_linux_extras_components }}" 
+  when: item.add_yum_pkgs is defined
+
+- name: install additional components from pip
+  pip:
+    name: "{{ item.add_pip_pkgs }}"
+    state: present
+  loop:  "{{ amazon_linux_extras_components }}" 
+  when: item.add_pip_pkgs is defined

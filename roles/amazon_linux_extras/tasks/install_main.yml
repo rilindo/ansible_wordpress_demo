@@ -1,0 +1,5 @@
+---
+- name: install packages
+  ansible.builtin.command:
+    cmd: "amazon-linux-extras install -y {{ item.pkgs }}"
+  loop: "{{ amazon_linux_extras_components }}" 

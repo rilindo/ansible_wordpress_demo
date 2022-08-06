@@ -1,9 +1,0 @@
----
-# defaults file for php
-
-php_pkgs:
-  - php-cli
-  - php-pdo
-  - php-fpm
-  - php-json
-  - php-mysqlnd

@@ -1,0 +1,5 @@
+---
+- name: enable components to be deployed from Amazon Linux Extras
+  ansible.builtin.command:
+    cmd: "amazon-linux-extras enable -y {{ item.name }}"
+  loop: "{{ amazon_linux_extras_components }}" 
