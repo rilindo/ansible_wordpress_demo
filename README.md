@@ -1,10 +1,23 @@
 WordPress Demo
 ==============
 
-This launchs an Amazon Linux 2 instance and then deploys a minimal viable install of WordPress. 
+This launches an Amazon Linux 2 instance and then deploys a minimal viable install of WordPress. 
 
-Explanation
------------
+Implementation
+--------------
+
+The deployment work something like this:
+
+1. First, the user is prompted for base AWS network info, after which, a t3a.micro instance is launched.
+2. Then, the play waits until the instance is reachable.
+3. Next, the inventory is refreshed to allow ansible to look up the new instance and connect to it.
+4. Then, the user is prompted for an domain to enter. That domain is validated shortly afterward to confirm that it is a "valid" domain.
+5. Credential secrets are read from file and decrypted if necessary.
+6. The database directory is created for the database container.
+7. The current forcast for Chicago is retrieved for first post.
+8. Afterwards, roles are invoked to install required components and commands.
+9. Then, a database container instance is created.
+10. Finally, wordpress is deployed with wrapper plays and a post with the current to published.
 
 Requirements
 ------------
@@ -181,6 +194,13 @@ PLAY RECAP *********************************************************************
 50.112.48.95               : ok=28   changed=15   unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 localhost                  : ok=3    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 ```
+
+Notes
+-----
+
+- The roles are created in lieu of using third party roles in Galaxy as support for Amazon Linux 2 is spotty at best
+- The roles have just enough functionality to support deploying WordPress. That said, they can be extended if necessary (for example, the `mysql` role).
+- We used the `wp-cli` command instead of using native Ansible modules such as `get_url` as  1) `wp-cli` is more purpose built and therefore suitable for deploying WordPress and 2) The role itself can be extend to be Ansible module in future revisions, if necessary.
 
 License
 -------
