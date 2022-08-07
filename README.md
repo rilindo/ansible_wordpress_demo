@@ -202,6 +202,7 @@ Notes
 - The roles have just enough functionality to support deploying WordPress. That said, they can be extended if necessary (for example, the `mysql` role).
 - We used the `wp-cli` command instead of using native Ansible modules such as `get_url` as  1) `wp-cli` is more purpose built and therefore suitable for deploying WordPress and 2) The role itself can be extend to be Ansible module in future revisions, if necessary.
 - We pulled weather forecast from [wttr.in](http://wttr.in) as that does not require an API key, which simplies retrieval and processing.
+- This is not meant to be a idempotent deployment. We recommend terminating the instance to re-deploy a new copy of wordpress. That said, re-running the deployment will not cause any issues other than another "first" post.
 
 License
 -------
