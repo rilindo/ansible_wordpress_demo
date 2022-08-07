@@ -29,7 +29,7 @@ Requirements
 Testing
 -------
 
-This was developed on a Mac and ran against Amazon Linux 2, with the following versions of:
+This was developed on a Mac and ran against Amazon Linux 2 in a non-default VPC, with the following versions of:
 
 ```
 ansible                 6.1.0
