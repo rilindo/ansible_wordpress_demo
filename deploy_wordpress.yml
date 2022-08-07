@@ -14,6 +14,7 @@
     wordpress_path: /var/www/html
     wp_admin_user: "wpadmin"
     weather_url: "https://wttr.in/Chicago?format=3"
+    wp_cli_name: wp
   vars_files:
     - secrets.yml
   vars_prompt:
@@ -65,12 +66,12 @@
         minutes: 2
     - name: download and extract wordpress to target directory
       ansible.builtin.shell: >
-        wp-cli core download 
+        {{ wp_cli_name }} core download 
         --path={{ wordpress_path }}
         --force
     - name: create wordpress configuration
       ansible.builtin.shell: >
-        wp-cli config create 
+        {{ wp_cli_name }} config create 
         --dbname={{ mysql_db }} 
         --dbuser={{ mysql_user }} 
         --dbpass={{ mysql_password }}
@@ -79,7 +80,7 @@
         --force
     - name: finalize installation of wordpress
       ansible.builtin.shell: >
-        wp-cli core install 
+        {{ wp_cli_name }}  core install 
         --url="{{ wp_domain }}"
         --title="Weather Blog"
         --admin_user={{ wp_admin_user }}
@@ -88,7 +89,7 @@
         --path={{ wordpress_path }}
     - name: create first wordpress post
       ansible.builtin.shell: >
-        wp-cli post create 
+        {{ wp_cli_name }} post create 
         --post_type=post 
         --post_title="Current Chicago Weather" 
         --post_content="{{ current_weather.content }}" 

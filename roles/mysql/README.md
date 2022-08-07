@@ -1,22 +1,18 @@
-Role Name
+mysql
 =========
 
-A brief description of the role goes here.
+A minimal setup of mysql community package. It doesn't do much other than install mySQL and the client packages. It is primarily used to support connecting to a container instance of mySQL as well as provide library to non-container apps.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+This is to be run on a RHEL-based system.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
-
-Dependencies
-------------
-
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+- `mysql_repo_url`: URL of mySQL repo.
+- `mysql_pkgs`: mySQL packages.
 
 Example Playbook
 ----------------
@@ -25,7 +21,7 @@ Including an example of how to use your role (for instance, with variables passe
 
     - hosts: servers
       roles:
-         - { role: username.rolename, x: 42 }
+         - mysql
 
 License
 -------
@@ -35,4 +31,4 @@ BSD
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Rilindo Foster <rilindo.foster@monzell.com>
