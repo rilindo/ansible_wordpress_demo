@@ -3,8 +3,10 @@
   hosts: localhost
   vars:
     instance_type: t3a.micro
-    image: ami-0cea098ed2ac54925
   vars_prompt:
+    - name: image
+      prompt: enter ami id, enter to use default
+      default: "ami-0cea098ed2ac54925"
     - name: security_group_id
       prompt: enter security group id
       private: no

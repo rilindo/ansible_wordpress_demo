@@ -65,6 +65,7 @@ The whole output should like this:
 rilindo@MacBook-Air ansible_wordpress_demo % ansible-playbook --ask-vault-pass site.yml        
 Vault password: 
 [WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match 'all'
+enter ami id, enter to use default [ami-0cea098ed2ac54925]: 
 enter security group id: sg-0590ac9090a5fa772
 enter subnet id: subnet-0fd8495487e71b137
 enter AWS keypair: TestKeyPair
@@ -203,10 +204,6 @@ Notes
 - We used the `wp-cli` command instead of using native Ansible modules such as `get_url` as  1) `wp-cli` is more purpose built and therefore suitable for deploying WordPress and 2) The role itself can be extend to be Ansible module in future revisions, if necessary.
 - We pulled weather forecast from [wttr.in](http://wttr.in) as that does not require an API key, which simplies retrieval and processing.
 - This is not meant to be a idempotent deployment. We recommend terminating the instance to re-deploy a new copy of wordpress. That said, re-running the deployment will not cause any issues other than another "first" post.
-
-TODO
-----
-Parameterized the ami.
 
 License
 -------
